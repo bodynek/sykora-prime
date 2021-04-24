@@ -11,6 +11,7 @@
  */
 package com.github.bodynek;
 
+import java.math.BigInteger;
 import java.util.BitSet;
 
 public class Sieve {
@@ -18,8 +19,20 @@ public class Sieve {
     private BitSet sieve;
 
     public Sieve() {
-        sieve=new BitSet();
+        sieve = new BitSet();
     }
 
+    public boolean isPrime(long number) {
+        if (number < 2) {
+            return false;
+        }
+        if (number < 4) {
+            return true;
+        }
+        return false;
+    }
 
+    public boolean isPrime(BigInteger number) {
+        return isPrime(number.longValueExact());
+    }
 }

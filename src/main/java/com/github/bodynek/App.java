@@ -7,6 +7,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +40,17 @@ public class App {
         Sheet sheet = workbook.getSheetAt(0);
 
         Map<Integer, List<String>> data = new HashMap<>();
-        int i = 0;
+        Sieve sieve = new Sieve();
         for (Row row : sheet) {
             Cell cell = row.getCell(1);
             if (cell != null) {
-                System.out.println(cell.getAddress());
+                String s = cell.getStringCellValue();
+                try {
+                    BigInteger number = new BigInteger(s);
+                    if (sieve.isPrime(number)) {
+                        System.out.println(number);
+                    }
+                } catch (NumberFormatException ignored) {}
             }
         }
     }
