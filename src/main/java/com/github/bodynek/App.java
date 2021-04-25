@@ -16,6 +16,7 @@ import java.util.Map;
  * Hello world!
  */
 public class App {
+
     public static void main(String[] args) {
         InputStream file = System.in;
         try {

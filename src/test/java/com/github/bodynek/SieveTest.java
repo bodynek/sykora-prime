@@ -1,29 +1,34 @@
 package com.github.bodynek;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+
+import java.math.BigInteger;
 
 public class SieveTest {
 
-    public Sieve sieve;
-
-    @Before
-    public void setUp() {
-        sieve = new Sieve();
-    }
 
     /**
      * Check first few numbers
      */
     @Test
     public void checkForLowNumbers() {
-        Assert.assertFalse(sieve.isPrime(-1));
-        Assert.assertFalse(sieve.isPrime(0));
-        Assert.assertFalse(sieve.isPrime(1));
-        Assert.assertTrue(sieve.isPrime(2));
-        Assert.assertTrue(sieve.isPrime(3));
-        Assert.assertFalse(sieve.isPrime(4));
+        Sieve sieve = new Sieve(BigInteger.valueOf(13));
+        Assert.assertFalse("-1", sieve.isPrime(-1));
+        Assert.assertFalse("0", sieve.isPrime(0));
+        Assert.assertFalse("1", sieve.isPrime(1));
+        Assert.assertTrue("2", sieve.isPrime(2));
+        Assert.assertTrue("3", sieve.isPrime(3));
+        Assert.assertFalse("4", sieve.isPrime(4));
+        Assert.assertTrue("5", sieve.isPrime(5));
+        Assert.assertFalse("6", sieve.isPrime(6));
+        Assert.assertTrue("7", sieve.isPrime(7));
+        Assert.assertFalse("8", sieve.isPrime(8));
+        Assert.assertFalse("9", sieve.isPrime(9));
+        Assert.assertFalse("10", sieve.isPrime(10));
+        Assert.assertTrue("11", sieve.isPrime(11));
+        Assert.assertFalse("12", sieve.isPrime(12));
+        Assert.assertTrue("13", sieve.isPrime(13));
     }
 
     /**
@@ -31,7 +36,8 @@ public class SieveTest {
      * from https://en.wikipedia.org/wiki/List_of_prime_numbers
      */
     @Test
-    public void checkForHigherPrimes() {
+    public void checkForMidPrimes() {
+        Sieve sieve = new Sieve(BigInteger.valueOf(7919));
         Assert.assertTrue(sieve.isPrime(7727));
         Assert.assertTrue(sieve.isPrime(7741));
         Assert.assertTrue(sieve.isPrime(7753));
@@ -52,5 +58,31 @@ public class SieveTest {
         Assert.assertTrue(sieve.isPrime(7901));
         Assert.assertTrue(sieve.isPrime(7907));
         Assert.assertTrue(sieve.isPrime(7919));
+    }
+
+    /**
+     * Check first several Mersenne primes
+     * from https://en.wikipedia.org/wiki/Mersenne_prime
+     */
+    @Test
+    public void checkForMersennePrimes() {
+        long startTime = System.currentTimeMillis();
+        Sieve sieve = new Sieve(new BigInteger("618970019642690137449562112"));
+        long endTime = System.currentTimeMillis();
+        System.out.println("Sieve took " + (endTime - startTime) + " milliseconds");
+
+        Assert.assertTrue(sieve.isPrime(3));
+        Assert.assertTrue(sieve.isPrime(7));
+        Assert.assertTrue(sieve.isPrime(31));
+        Assert.assertTrue(sieve.isPrime(127));
+        Assert.assertTrue(sieve.isPrime(8191));
+        Assert.assertTrue(sieve.isPrime(131071));
+        Assert.assertTrue(sieve.isPrime(524287));
+        Assert.assertTrue(sieve.isPrime(2147483647));
+        Assert.assertFalse(sieve.isPrime(2147483647L * 2147483647L));
+        Assert.assertTrue(sieve.isPrime(2305843009213693951L));
+        Assert.assertTrue(sieve.isPrime(new BigInteger("618970019642690137449562111")));
+        Assert.assertFalse(sieve.isPrime(new BigInteger("618970019642690137449562112")));
+//        Assert.assertFalse(sieve.isPrime(BigInteger.valueOf(2305843009213693951L).pow(2)));
     }
 }
