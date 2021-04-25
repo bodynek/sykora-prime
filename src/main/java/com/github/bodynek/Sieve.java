@@ -81,7 +81,7 @@ public class Sieve {
                 .noneMatch(index -> number.remainder(BigInteger.valueOf(toValue(index)))
                         .compareTo(BigInteger.ZERO) == 0);
         BigInteger last = BigInteger.valueOf(toValue(sieveStorage.size() - 1));
-        if (!ret || number.compareTo(last.pow(2)) < 0) {
+        if (!ret || number.compareTo(last.multiply(last)) < 0) {
             return ret;
         }
         return isPrimeByDivision(number, last);

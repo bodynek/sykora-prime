@@ -66,7 +66,7 @@ public class SieveTest {
      */
     @Test
     public void checkForMersennePrimes() {
-        Sieve sieve = new Sieve(new BigInteger("618970019642690137449562112"));
+        Sieve sieve = new Sieve(BigInteger.valueOf(2147483647L * 2147483647L));
         Assert.assertTrue(sieve.isPrime(3));
         Assert.assertTrue(sieve.isPrime(7));
         Assert.assertTrue(sieve.isPrime(31));
@@ -75,9 +75,7 @@ public class SieveTest {
         Assert.assertTrue(sieve.isPrime(131071));
         Assert.assertTrue(sieve.isPrime(524287));
         Assert.assertTrue(sieve.isPrime(2147483647));
-        Assert.assertFalse(sieve.isPrime(2147483647L * 2147483647L));
         Assert.assertTrue(sieve.isPrime(2305843009213693951L));
-//        Assert.assertTrue(sieve.isPrime(new BigInteger("618970019642690137449562111")));
-        Assert.assertFalse(sieve.isPrime(new BigInteger("618970019642690137449562112")));
+        Assert.assertFalse(sieve.isPrime(2147483647L * 2147483647L));
     }
 }
