@@ -8,9 +8,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.math.BigInteger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Hello world!
@@ -40,8 +37,22 @@ public class App {
         }
         Sheet sheet = workbook.getSheetAt(0);
 
-        Map<Integer, List<String>> data = new HashMap<>();
-        Sieve sieve = new Sieve();
+        BigInteger max = BigInteger.ZERO;
+        // first scan for finding the greatest number for sieve preparation
+        for (Row row : sheet) {
+            Cell cell = row.getCell(1);
+            if (cell != null) {
+                String s = cell.getStringCellValue();
+                try {
+                    BigInteger number = new BigInteger(s);
+                    max = max.max(number);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+
+        Sieve sieve = new Sieve(max);
+        // second scan for filtering the primes
         for (Row row : sheet) {
             Cell cell = row.getCell(1);
             if (cell != null) {
@@ -51,7 +62,8 @@ public class App {
                     if (sieve.isPrime(number)) {
                         System.out.println(number);
                     }
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
     }

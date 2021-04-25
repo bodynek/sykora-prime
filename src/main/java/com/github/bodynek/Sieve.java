@@ -13,13 +13,19 @@ package com.github.bodynek;
 
 import java.math.BigInteger;
 import java.util.BitSet;
+import java.util.stream.Stream;
 
+/**
+ * Euler's Sieve for primeness test
+ * <p>
+ * Maximum size of sieve is approx 268MB
+ */
 public class Sieve {
 
     private final BitSet sieveStorage;
 
     /**
-     * Prepare Euler's sieve using BitSet for primeness test to maximum size BitSet can hold
+     * Prepare maximum size of Euler's sieve using BitSet for primeness test
      */
     public Sieve() {
         this(new BigInteger("42000000000000000000"));
@@ -65,24 +71,20 @@ public class Sieve {
      * @return true if number is prime
      */
     protected boolean isPrimeBySieve(BigInteger number) {
+        // Sieve is big enough to find number by lookup
         if (number.compareTo(BigInteger.valueOf(toValue(sieveStorage.size() - 1))) <= 0) {
             return sieveStorage.get(toIndex(number.longValue()));
         }
-        boolean ret = sieveStorage.stream()
-                .mapToObj(index -> {
-                    if ((toValue(index) * toValue(index)) > number.longValue()) {
-                        return true;
-                    }
-                    return number.remainder(BigInteger.valueOf(toValue(index)))
-                            .compareTo(BigInteger.ZERO) != 0;
-                })
-                .reduce(Boolean::logicalAnd)
-                .orElse(true);
+        // Use sieve to generate divisors and try them
+        boolean ret = sieveStorage.stream().parallel()
+                .filter(index -> ((toValue(index) * toValue(index)) <= number.longValue()))
+                .noneMatch(index -> number.remainder(BigInteger.valueOf(toValue(index)))
+                        .compareTo(BigInteger.ZERO) == 0);
         BigInteger last = BigInteger.valueOf(toValue(sieveStorage.size() - 1));
         if (!ret || number.compareTo(last.pow(2)) < 0) {
             return ret;
         }
-        return isPrimeByDivisionHelpedBySieve(number, last);
+        return isPrimeByDivision(number, last);
     }
 
     private int toIndex(long value) {
@@ -100,36 +102,13 @@ public class Sieve {
      * @param from   smallest divisor to be used for check
      * @return true if number is prime
      */
-    protected boolean isPrimeByDivisionHelpedBySieve(BigInteger number, BigInteger from) {
-        BigInteger max = number.sqrt();
-        BigInteger i;
-        for (i = from; i.compareTo(max) <= 0; i = i.add(BigInteger.TWO)) {
-            if (!isPrime(i)) {
-                continue;
-            }
-            if (number.remainder(i).compareTo(BigInteger.ZERO) == 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Check number for primeness using division
-     *
-     * @param number number to be checked for primeness
-     * @param from   smallest divisor to be used for check
-     * @return true if number is prime
-     */
     protected boolean isPrimeByDivision(BigInteger number, BigInteger from) {
         BigInteger max = number.sqrt();
-        BigInteger i;
-        for (i = from; i.compareTo(max) <= 0; i = i.add(BigInteger.TWO)) {
-            if (number.remainder(i).compareTo(BigInteger.ZERO) == 0) {
-                return false;
-            }
-        }
-        return true;
+
+        return Stream.iterate(from, i -> i.compareTo(max) <= 0, i -> i.add(BigInteger.TWO))
+                .parallel()
+                .filter(i -> !isPrime(i))
+                .noneMatch(i -> number.remainder(i).compareTo(BigInteger.ZERO) == 0);
     }
 
     /**
